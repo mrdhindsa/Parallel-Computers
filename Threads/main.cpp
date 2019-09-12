@@ -40,19 +40,13 @@ int main(int argc, char** argv)
 	}
 	int schedule = atoi(argv[1]);
 
-
 	pthread_t       tid[4];
 	int             status = 0;
 	int             id = 0;
 	long            stamp = 0;
 	int             mode = 0;
 
-
-	
-	// This is to set the global start time
 	gettimeofday(&t_global_start, NULL);	
-
-
 
 	tcb[0].id = 0;
 	tcb[0].task_time = 200;
@@ -79,7 +73,6 @@ int main(int argc, char** argv)
 	}
 	pthread_cond_init (&a_task_is_done, NULL); 
 	
-
 	global_work = 1;
 	printf("[Main] Create worker threads\n");
 	for (int i=0; i<4; i++) {
@@ -88,22 +81,14 @@ int main(int argc, char** argv)
 		}
 	}
 
-	// Wait until the thread is in place
 	usleep(MSEC(1000));
 	
-	
-	// This is to reset the global time and skip the initial wait
 	gettimeofday(&t_global_start, NULL);	
-	
 	
 	int sleep = 0;
 	for (int i=0; i<240; i++) {	
 		stamp = get_time_stamp();
 
-		/////////////////////////////////////////////////////////
-		// Implement different scheduling algorithms
-        // Select different schedule based on mode value
-		
 		switch(schedule)
 		{
 			case 0:
@@ -116,8 +101,6 @@ int main(int argc, char** argv)
 				rm_schedule();
 				break;
 		}
-		/////////////////////////////////////////////////////////
-		// Wait for a fraction of 100ms or until a task is done.
 
 		stamp = get_time_stamp();
 		sleep = 100 - (stamp%100);
@@ -129,17 +112,13 @@ int main(int argc, char** argv)
 		}
 	}
 
-
 	printf("[Main] It's time to finish the thread\n");
-
-
 
 	printf("[Main] Locks\n");
 	pthread_mutex_lock(&mutex);
 	global_work = 0;
 	printf("[Main] Unlocks\n");
 
-	
 	// make sure all the process are in the ready queue
 	usleep(MSEC(3000));
 	while (readyQue.size()>0) {
@@ -148,10 +127,7 @@ int main(int argc, char** argv)
 
 	}
 
-
 	pthread_mutex_unlock(&mutex);
-
-
 
 	/* wait for the second thread to finish */
 	for (int i=0; i<4; i++) {
@@ -159,8 +135,6 @@ int main(int argc, char** argv)
 			fprintf(stderr, "Error joining thread\n");	
 		}
 	}
-
-
 	return 0;
 }
 
@@ -177,7 +151,6 @@ void fifo_schedule(void)
 	}
 	
 }
-
 
 void edf_schedule(void)
 {
